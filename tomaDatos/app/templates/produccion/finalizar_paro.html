@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Finalizar Paro</h2>
+    <form method="POST" action="{{ url_for('main.finalizar_paro', id_registro=registro.id) }}">
+        <div class="mb-3">
+            <label for="tipo_paro" class="form-label">Tipo de Paro:</label>
+            <select class="form-select" id="tipo_paro" name="tipo_paro" required>
+                {% for tipo in tipos_paro %}
+                <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar Paro</button>
+    </form>
+</div>
+{% endblock %}

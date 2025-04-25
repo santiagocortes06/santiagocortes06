@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <h2 class="mb-4">Control de Producción - Máquinas Activas</h2>
+    
+    <div class="row">
+        {% for registro in registros %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header" style="background-color: var(--color-primary); color: white;">
+                    <h4 class="mb-0">{{ registro.maquina.nombre }}</h4>
+                    {% if registro.id_producto %}
+                        <span class="badge bg-light text-dark">
+                            {{ registro.producto.nombre }} ({{ registro.producto.referencia }})
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if not registro.id_producto %}
+                    <!-- Selector de Producto -->
+                    <form method="POST" action="{{ url_for('main.asignar_producto', id_registro=registro.id) }}" class="mb-3">
+                        <div class="form-group">
+                            <label for="producto_{{ registro.id }}" class="form-label">Seleccionar Producto:</label>
+                            <select class="form-select" id="producto_{{ registro.id }}" name="producto" required>
+                                <option value="" disabled selected>Elegir producto...</option>
+                                {% for producto in productos %}
+                                <option value="{{ producto.id }}">{{ producto.nombre }} ({{ producto.referencia }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Confirmar Producto
+                            </button>
+                        </div>
+                    </form>
+                    {% else %}
+                    <!-- Control de Paros -->
+                    <div class="d-flex justify-content-between mb-3">
+                        <form method="POST" action="{{ url_for('main.iniciar_paro', id_registro=registro.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Iniciar Paro
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('main.finalizar_paro', id_registro=registro.id) }}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Finalizar Paro
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Peso del Rollo -->
+                        <div class="col-md-12">
+                            <form method="POST" action="{{ url_for('main.registrar_peso_rollo', id_registro=registro.id) }}" class="d-flex gap-2">
+                                <div class="flex-grow-1">
+                                    <label for="peso_{{ registro.id }}" class="form-label">Peso del rollo (kg):</label>
+                                    <input type="number" step="0.01" name="peso" id="peso_{{ registro.id }}" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary align-self-end">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Retal -->
+                        <div class="col-md-12">
+                            <form method="POST" action="{{ url_for('main.registrar_retal', id_registro=registro.id) }}" class="d-flex gap-2">
+                                <div class="flex-grow-1">
+                                    <label for="retal_{{ registro.id }}" class="form-label">Retal (kg):</label>
+                                    <input type="number" step="0.01" name="retal" id="retal_{{ registro.id }}" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-warning align-self-end">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Aleluya -->
+                        <div class="col-md-12">
+                            <form method="POST" action="{{ url_for('main.registrar_aleluya', id_registro=registro.id) }}" class="d-flex gap-2">
+                                <div class="flex-grow-1">
+                                    <label for="aleluya_{{ registro.id }}" class="form-label">Merma / Aleluya (kg):</label>
+                                    <input type="number" step="0.01" name="aleluya" id="aleluya_{{ registro.id }}" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-info align-self-end">
+                                    <i class="bi bi-plus-circle"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Resumen -->
+                    <div class="card bg-light mt-3">
+                        <div class="card-body p-2">
+                            <div class="row">
+                                <div class="col-6">
+                                    <small class="d-block"><strong>Rollos:</strong> {{ registro.rollos }}</small>
+                                    <small class="d-block"><strong>Kg Conformes:</strong> {{ registro.kg_conformes }}</small>
+                                </div>
+                                <div class="col-6">
+                                    <small class="d-block"><strong>Retal:</strong> {{ registro.retal }}</small>
+                                    <small class="d-block"><strong>Merma:</strong> {{ registro.merma }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit forms when Enter is pressed
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                form.submit();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

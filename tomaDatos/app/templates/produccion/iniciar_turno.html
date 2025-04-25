@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header" style="background-color: var(--color-primary); color: white;">
+            <h4 class="mb-0">Iniciar Nuevo Turno</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.iniciar_turno') }}">
+                <!-- Selección de Turno (Ahora primero) -->
+                <div class="mb-4">
+                    <label for="turno" class="form-label">Turno *</label>
+                    <select class="form-select" id="turno" name="turno" required>
+                        <option value="" disabled selected>Seleccione un turno</option>
+                        {% for turno in turnos %}
+                            <option value="{{ turno.id }}">
+                                {{ turno.nombre }} ({{ turno.duracion_horas }} horas)
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Selección de Máquinas (Ahora con botones) -->
+                <div class="mb-4">
+                    <label class="form-label d-block">Selección de Máquinas *</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for maquina in maquinas %}
+                            <input type="checkbox" class="btn-check" id="maquina{{ maquina.id }}" name="maquinas[]" value="{{ maquina.id }}">
+                            <label class="btn btn-outline-primary" for="maquina{{ maquina.id }}">
+                                {{ maquina.nombre }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Ayudante -->
+                <div class="mb-4">
+                    <label for="ayudante" class="form-label">Operario Ayudante</label>
+                    <select class="form-select" id="ayudante" name="ayudante">
+                        <option value="" selected>No requiere ayudante</option>
+                        {% for operario in operarios %}
+                            <option value="{{ operario.id }}">{{ operario.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary me-md-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-play-circle"></i> Iniciar Turno
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Asegurar que al menos una máquina esté seleccionada antes de enviar el formulario
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const maquinasSeleccionadas = document.querySelectorAll('input[name="maquinas[]"]:checked');
+        if (maquinasSeleccionadas.length === 0) {
+            e.preventDefault();
+            alert('Por favor seleccione al menos una máquina');
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

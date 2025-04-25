@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="my-4">Registros de Producción Activos</h2>
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Máquina</th>
+                    <th>Producto</th>
+                    <th>Operario</th>
+                    <th>Inicio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for produccion in producciones %}
+                <tr>
+                    <td>{{ produccion.maquina.nombre }}</td>
+                    <td>{{ produccion.producto.nombre }}</td>
+                    <td>{{ produccion.operario_principal.nombre }}</td>
+                    <td>{{ produccion.fecha }} {{ produccion.hora_inicio.strftime('%H:%M') }}</td>
+                    <td>
+                                                <a href="{{ url_for('main.registrar_paro', id_registro=produccion.id) }}" 
+                           class="btn btn-sm btn-warning">
+                            <i class="bi bi-exclamation-triangle"></i> Registrar Paro
+                        </a>
+                        <a href="{{ url_for('main.finalizar_turno', id_registro=produccion.id) }}" 
+                           class="btn btn-sm btn-success">
+                            <i class="bi bi-check-circle"></i> Finalizar Turno
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay turnos activos</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="d-grid gap-2 col-md-4 mx-auto my-4">
+        <a href="{{ url_for('main.iniciar_produccion') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-plus-circle"></i> Iniciar Nuevo Turno
+        </a>
+    </div>
+</div>
+{% endblock %}

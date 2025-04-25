@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-gear"></i> Módulo de Producción</h2>
+    
+    <div class="card shadow">
+        <div class="card-header" style="background-color: var(--color-primary) !important; color: white;">
+            <h4 class="mb-0">Iniciar Nuevo Turno</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.iniciar_turno') }}">
+                <!-- Selección de Máquina -->
+                <div class="mb-3">
+                    <label for="maquina" class="form-label">Máquina:</label>
+                    <select class="form-select" id="maquina" name="maquina" required>
+                        <option value="" selected disabled>Seleccione una máquina</option>
+                        {% for maquina in maquinas %}
+                            <option value="{{ maquina.id }}">
+                                {{ maquina.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Selección de Producto -->
+                <div class="mb-3">
+                    <label for="producto" class="form-label">Producto:</label>
+                    <select class="form-select" id="producto" name="producto" required>
+                        <option value="" selected disabled>Seleccione un producto</option>
+                        {% for producto in productos %}
+                            <option value="{{ producto.id }}">
+                                {{ producto.nombre }} ({{ producto.referencia }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Selección de Turno -->
+                <div class="mb-3">
+                    <label for="turno" class="form-label">Turno:</label>
+                    <select class="form-select" id="turno" name="turno" required>
+                        <option value="" selected disabled>Seleccione un turno</option>
+                        {% for turno in turnos %}
+                            <option value="{{ turno.id }}">
+                                {{ turno.nombre }} ({{ turno.duracion_horas }} horas)
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Campo para Ayudante -->
+                <div class="mb-3">
+                    <label for="ayudante" class="form-label">Operario Ayudante (Opcional):</label>
+                    <select class="form-select" id="ayudante" name="ayudante">
+                        <option value="" selected>No requiere ayudante</option>
+                        {% for operario in operarios %}
+                            <option value="{{ operario.id }}">{{ operario.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary me-md-2">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-play-circle"></i> Iniciar Turno
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Selección de Producto (si no está asignado) -->
+    {% if not registro.id_producto %}
+    <div class="card mb-4">
+        <div class="card-header" style="background-color: var(--color-primary); color: white;">
+            <h4 class="mb-0">Seleccionar Producto para {{ registro.maquina.nombre }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.asignar_producto', id_registro=registro.id) }}">
+                <div class="mb-3">
+                    <label for="producto" class="form-label">Producto a Producir:</label>
+                    <select class="form-select" id="producto" name="producto" required>
+                        <option value="" disabled selected>Seleccione un producto...</option>
+                        {% for producto in productos %}
+                        <option value="{{ producto.id }}">{{ producto.nombre }} ({{ producto.referencia }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Confirmar Producto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Una vez asignado el producto, mostrar los formularios de producción -->
+    {% if registro.id_producto %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <div class="card-header" style="background-color: var(--color-primary); color: white;">
+                    <h4 class="mb-0">{{ registro.maquina.nombre }} - {{ registro.producto.nombre }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Botones de Paro -->
+                    <div class="d-flex justify-content-between mb-4">
+                        <form method="POST" action="{{ url_for('main.registrar_paro', id_registro=registro.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-exclamation-triangle"></i> Iniciar Paro
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ url_for('main.finalizar_paro', id_registro=registro.id) }}">
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle"></i> Finalizar Paro
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Peso del rollo -->
+                    <form method="POST" action="{{ url_for('main.registrar_peso_rollo', id_registro=registro.id) }}" class="mb-4">
+                        <div class="form-group">
+                            <label for="peso" class="form-label">Peso del rollo (kg)</label>
+                            <input type="number" step="0.01" name="peso" id="peso" class="form-control" required maxlength="3" min="0" max="999">
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Registrar peso del rollo
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <!-- Retal de proceso -->
+                    <form method="POST" action="{{ url_for('main.registrar_retal', id_registro=registro.id) }}" class="mb-4">
+                        <div class="form-group">
+                            <label for="retal" class="form-label">Retal de proceso (kg)</label>
+                            <input type="number" step="0.01" name="retal" id="retal" class="form-control" required maxlength="2" min="0" max="99">
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-trash"></i> Registrar Retal
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <!-- Aleluya -->
+                    <form method="POST" action="{{ url_for('main.registrar_aleluya', id_registro=registro.id) }}" class="mb-4">
+                        <div class="form-group">
+                            <label for="aleluya" class="form-label">Merma / Aleluya (kg)</label>
+                            <input type="number" step="0.01" name="aleluya" id="aleluya" class="form-control" required maxlength="2" min="0" max="99">
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="submit" class="btn btn-info">
+                                <i class="bi bi-trash"></i> Registrar Aleluya
+                            </button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <!-- Capas -->
+                    <form method="POST" action="{{ url_for('main.registrar_capas', id_registro=registro.id) }}" class="mb-4">
+                        <div class="form-group">
+                            <label for="capas" class="form-label">Capas</label>
+                            <input type="number" step="1" name="capas" id="capas" class="form-control" required min="0">
+                        </div>
+                        <div class="text-end mt-2">
+                            <button type="submit" class="btn btn-info">
+                                <i class="bi bi-layers"></i> Registrar Capas
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Restricción para un solo registro por turno -->
+                    {% if registro.rollos > 0 %}
+                    <div class="alert alert-warning mt-4">
+                        Solo se permite un registro por turno.
+                    </div>
+                    {% endif %}
+
+                    <!-- Información solo visible -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Resumen actual</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item bg-transparent">Cantidad de rollos: {{ registro.rollos }}</li>
+                                        <li class="list-group-item bg-transparent">Kg conformes acumulados: {{ registro.kg_conformes }}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item bg-transparent">Retal registrado: {{ registro.retal }}</li>
+                                        <li class="list-group-item bg-transparent">Aleluya registrada: {{ registro.merma }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end mt-4">
+                        <form method="POST" action="{{ url_for('main.finalizar_turno', id_registro=registro.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-stop-circle"></i> Finalizar Turno
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

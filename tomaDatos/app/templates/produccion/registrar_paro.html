@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-exclamation-triangle"></i> Registro de Parada</h2>
+    
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">Detalles de la Parada</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.registrar_paro', id_registro=id_registro) }}">
+                
+                <!-- Máquina (solo lectura) -->
+                <div class="mb-3">
+                    <label class="form-label">Máquina:</label>
+                    <input type="text" class="form-control" 
+                           value="{{ produccion.maquina.nombre }}" readonly>
+                </div>
+
+                <!-- Producto (solo lectura) -->
+                <div class="mb-3">
+                    <label class="form-label">Producto:</label>
+                    <input type="text" class="form-control" 
+                           value="{{ produccion.producto.nombre }}" readonly>
+                </div>
+
+                <!-- Tipo de Parada (simplificado) -->
+                <div class="mb-3">
+                    <label for="tipo" class="form-label">Tipo de Parada:</label>
+                    <select class="form-select" name="tipo" id="tipo" required>
+                        <option value="" selected disabled>Seleccione un tipo</option>
+                        <option value="alistamiento">Alistamiento</option>
+                        <option value="averia">Avería</option>
+                        <option value="calidad">Problema de Calidad</option>
+                        <option value="organizacional">Organizacional</option>
+                        <option value="programado">Mantenimiento Programado</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripción:</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" 
+                              rows="3" placeholder="Describa la parada..." required></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-secondary me-md-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Registrar Parada
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
