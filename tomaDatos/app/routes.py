@@ -60,10 +60,12 @@ def iniciar_produccion():
         maquinas = Maquina.query.all()
         turnos = Turno.query.all()
         productos = Producto.query.all()
+        usuarios = Usuario.query.all()  # Obtener lista de operarios
         return render_template('produccion/iniciar_turno.html', 
                             maquinas=maquinas, 
                             turnos=turnos, 
-                            productos=productos)
+                            productos=productos,
+                            usuarios=usuarios)
     except Exception as e:
         flash('Error al cargar los datos de producción', 'danger')
         return redirect(url_for('main.index'))
@@ -379,3 +381,12 @@ def registro():
             flash(f'Error al registrar usuario: {str(e)}', 'danger')
 
     return render_template('registro.html', form=form)
+
+@main_bd.route('/get_resumen/<int:id_registro>', methods=['GET'])
+@login_required
+def get_resumen(id_registro):
+    registro = RegistroProduccion.query.get_or_404(id_registro)
+    return jsonify({
+        'rollos': registro.rollos,
+        'kg_conformes': registro.kg_conformes
+    })

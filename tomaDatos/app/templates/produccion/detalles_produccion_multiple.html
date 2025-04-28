@@ -25,7 +25,7 @@
                             <select class="form-select" id="producto_{{ registro.id }}" name="producto" required>
                                 <option value="" disabled selected>Elegir producto...</option>
                                 {% for producto in productos %}
-                                <option value="{{ producto.id }}">{{ producto.nombre }} ({{ producto.referencia }})</option>
+                                <option value="{{ producto.id }}">{{ producto.referencia }}</option>
                                 {% endfor %}
                             </select>
                         </div>

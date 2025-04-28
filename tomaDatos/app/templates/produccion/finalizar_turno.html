@@ -13,6 +13,7 @@
             <p><strong>Máquina:</strong> {{ registro.maquina.nombre }}</p>
             <p><strong>Producto:</strong> {{ registro.producto.nombre }}</p>
             <p><strong>Operario:</strong> {{ registro.operario_principal.nombre }}</p>
+            <p><strong>Operario Ayudante:</strong> {{ registro.operario_ayudante.nombre if registro.operario_ayudante else 'No asignado' }}</p>
             <p><strong>Horas trabajadas:</strong> {{ horas_trabajadas|round(2) }} horas</p>
             <p><strong>Tiempo de paro:</strong> {{ tiempo_paro|round(2) }} horas</p>
             <p><strong>Kg conformes:</strong> {{ registro.kg_conformes }}</p>

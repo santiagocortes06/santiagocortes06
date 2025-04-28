@@ -39,8 +39,8 @@
                     <label for="ayudante" class="form-label">Operario Ayudante</label>
                     <select class="form-select" id="ayudante" name="ayudante">
                         <option value="" selected>No requiere ayudante</option>
-                        {% for operario in operarios %}
-                            <option value="{{ operario.id }}">{{ operario.nombre }}</option>
+                        {% for usuario in usuarios %}
+                            <option value="{{ usuario.id }}">{{ usuario.nombre }}</option>
                         {% endfor %}
                     </select>
                 </div>
